@@ -1,0 +1,20 @@
+﻿{
+  "name": "ethiopost-content-operations",
+  "version": "1.0.0",
+  "description": "Ethiopost Internal Content Operations & Approval System",
+  "main": "server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js",
+    "seed": "node seed.js",
+    "test": "node test/workflow_test.js"
+  },
+  "keywords": [
+    "ethiopost",
+    "content-operations",
+    "approval-workflow",
+    "brand-management"
+  ],
+  "author": "Ethiopost Technology & Marketing Operations",
+  "license": "UNLICENSED"
+}

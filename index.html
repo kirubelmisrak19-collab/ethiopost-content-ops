@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ethiopost — Content Operations</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="icon" type="image/png" href="/assets/ethiopost_logo.png"><path d='M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z'/></svg>">
+</head>
+<body>
+
+  <!-- CLEAN TOP NAVBAR -->
+  <header class="navbar">
+    <div class="navbar-inner">
+      <div class="navbar-left">
+        <div class="logo-wrap" title="Ethiopost — Content Operations">
+          <img src="/assets/ethiopost_logo.png" alt="Ethiopost — የኢትዮጵያ ፖስታ" class="official-logo-img">
+        </div>
+      </div>
+
+      <!-- CENTER: ROLE SWITCHER (CLEAR RESPONSIBILITY INDICATOR) -->
+      <div class="navbar-center">
+        <div class="role-switcher-card">
+          <span class="role-switcher-label">Logged in as:</span>
+          <select id="user-role-select" class="role-select">
+            <!-- Dynamically populated -->
+          </select>
+        </div>
+      </div>
+
+      <!-- RIGHT: BRAND FILTER & ACTIONS -->
+      <div class="navbar-right">
+        <div class="brand-filter-group" id="brand-filter-bar">
+          <button class="brand-btn active" data-brand="all">All Brands</button>
+          <button class="brand-btn" data-brand="plt_ethiopost">Ethiopost</button>
+          <button class="brand-btn" data-brand="plt_post_gebeya">Post Gebeya</button>
+          <button class="brand-btn" data-brand="plt_post_finance">Post Finance</button>
+        </div>
+
+        <!-- Admin Action: Add Team Member -->
+        <button class="btn-add-user" id="btn-add-user" style="display: none;" title="Create user account by role">
+          + Add Member
+        </button>
+
+        <!-- Creator / Admin Action: New Brief -->
+        <button class="btn-new-brief" id="btn-create-brief" style="display: none;">
+          + New Brief
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ROLE WORKSPACE HEADER BANNER -->
+  <div class="workspace-banner">
+    <div class="workspace-banner-inner">
+      <div>
+        <h1 class="workspace-title" id="workspace-title">My Tasks</h1>
+        <p class="workspace-subtitle" id="workspace-subtitle">Content items assigned to you.</p>
+      </div>
+      <div class="workspace-tabs" id="workspace-tabs">
+        <!-- Rendered based on role -->
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN CLEAN WORKSPACE CONTENT -->
+  <main class="workspace-main">
+    <div class="workspace-toolbar" id="workspace-toolbar">
+      <div class="tasks-counter" id="tasks-counter">Loading...</div>
+      <div class="search-wrap">
+        <input type="text" id="task-search" placeholder="Search tasks or captions...">
+      </div>
+    </div>
+
+    <!-- TASK ITEMS OR TEAM GRID CONTAINER -->
+    <div class="tasks-container" id="tasks-container">
+      <div class="loading-state">Loading your tasks...</div>
+    </div>
+  </main>
+
+  <!-- MODAL: ADD TEAM MEMBER (ADMIN ONLY) -->
+  <div class="modal-backdrop" id="modal-add-user">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Add Ethiopost Team Member</h3>
+        <button class="modal-x" data-dismiss="modal-add-user">&times;</button>
+      </div>
+      <form id="form-add-user">
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Full Name *</label>
+            <input type="text" id="new-user-name" placeholder="e.g. Marta Bekele" required>
+          </div>
+          <div class="form-group">
+            <label>Official Ethiopost Email *</label>
+            <input type="email" id="new-user-email" placeholder="e.g. marta.bekele@ethiopost.et" required>
+          </div>
+          <div class="form-group">
+            <label>System Role *</label>
+            <select id="new-user-role" required>
+              <option value="designer">🎨 Graphic Designer (Designs & uploads creative artwork)</option>
+              <option value="approver">🔍 Approval Lead (Reviews & approves copy + artwork)</option>
+              <option value="publisher">🚀 Social Media Publisher (Posts live to social channels)</option>
+              <option value="content_creator">✏️ Content Creator (Drafts copy briefs)</option>
+              <option value="admin">🛠️ Admin (Full system oversight & management)</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <div class="form-group flex-1">
+              <label>Official Job Title</label>
+              <input type="text" id="new-user-title" placeholder="e.g. Senior Visual Designer">
+            </div>
+            <div class="form-group flex-1">
+              <label>Department</label>
+              <input type="text" id="new-user-dept" value="Marketing & Corporate Communications">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal-add-user">Cancel</button>
+          <button type="submit" class="btn btn-primary">Create User Account</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: UPLOAD ARTWORK (DESIGNER ONLY) -->
+  <div class="modal-backdrop" id="modal-upload-artwork">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Upload Creative Artwork or Video Work</h3>
+        <button class="modal-x" data-dismiss="modal-upload-artwork">&times;</button>
+      </div>
+      <form id="form-upload-artwork">
+        <input type="hidden" id="upload-content-id">
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Select Creative File (Images: PNG, JPG, SVG or Videos: MP4, MOV, WebM)</label>
+            <input type="file" id="upload-file-input" accept="image/*,video/*,.svg,.mp4,.mov,.webm,.m4v">
+            <span class="hint">Upload graphic designs or video works (MP4, MOV, WebM). Or leave empty to auto-generate branded graphic.</span>
+          </div>
+          <div class="form-group">
+            <label>Version Note (Optional)</label>
+            <input type="text" id="upload-note-input" placeholder="e.g. Logo adjusted and phone numbers made bold">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal-upload-artwork">Cancel</button>
+          <button type="submit" class="btn btn-primary">Upload & Submit for Approval</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: REQUEST CHANGES (APPROVER ONLY) -->
+  <div class="modal-backdrop" id="modal-request-changes">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 style="color: #BE123C;">Request Changes from Designer</h3>
+        <button class="modal-x" data-dismiss="modal-request-changes">&times;</button>
+      </div>
+      <form id="form-request-changes">
+        <input type="hidden" id="changes-content-id">
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Revision Instructions *</label>
+            <span class="hint">Specify exactly what the graphic designer should change.</span>
+            <textarea id="changes-comment-input" rows="4" placeholder="e.g. Please make the Ethiopost logo larger and use the official blue color..." required></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal-request-changes">Cancel</button>
+          <button type="submit" class="btn btn-danger">Send Revision Request</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: PUBLISH LIVE (PUBLISHER ONLY) -->
+  <div class="modal-backdrop" id="modal-publish">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 style="color: #047857;">Confirm Publishing Live</h3>
+        <button class="modal-x" data-dismiss="modal-publish">&times;</button>
+      </div>
+      <form id="form-publish">
+        <input type="hidden" id="publish-content-id">
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Publishing Channel(s) *</label>
+            <input type="text" id="publish-channel-input" value="Facebook & Telegram" required>
+          </div>
+          <div class="form-group">
+            <label>Live URL (Optional)</label>
+            <input type="url" id="publish-url-input" placeholder="https://t.me/ethiopost_official/...">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal-publish">Cancel</button>
+          <button type="submit" class="btn btn-success">Mark as Live</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: CREATE CONTENT BRIEF (CREATOR / ADMIN) -->
+  <div class="modal-backdrop" id="modal-create-brief">
+    <div class="modal-card modal-card-lg">
+      <div class="modal-header">
+        <h3>Create New Content Brief</h3>
+        <button class="modal-x" data-dismiss="modal-create-brief">&times;</button>
+      </div>
+      <form id="form-create-brief">
+        <div class="modal-body">
+          <div class="form-row">
+            <div class="form-group flex-1">
+              <label>Brand / Platform *</label>
+              <select id="brief-brand" required>
+                <option value="plt_ethiopost">Ethiopost</option>
+                <option value="plt_post_gebeya">Post Gebeya</option>
+                <option value="plt_post_finance">Post Finance</option>
+              </select>
+            </div>
+            <div class="form-group flex-1">
+              <label>Scheduled Release Date</label>
+              <input type="date" id="brief-date">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group flex-1">
+              <label>Assign to Graphic Designer *</label>
+              <select id="brief-designer" required>
+                <!-- Populated dynamically with registered designers -->
+              </select>
+            </div>
+            <div class="form-group flex-1">
+              <label>Assign to Approval Lead</label>
+              <select id="brief-approver">
+                <!-- Populated dynamically with registered approvers -->
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Brief Title / Subject *</label>
+            <input type="text" id="brief-title" placeholder="e.g. EMS Express 24-Hour Regional Delivery Launch" required>
+          </div>
+
+          <div class="form-group">
+            <label>Headline (Bold hook on image)</label>
+            <input type="text" id="brief-headline" placeholder="e.g. Fast, Secure, Nationwide with Ethiopost!">
+          </div>
+
+          <div class="form-group">
+            <label>Plain Caption Copy *</label>
+            <textarea id="brief-caption" rows="4" placeholder="Write full plain copy with hashtags, hotline, and CTA..." required></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>Target Social Channels</label>
+            <div class="channel-pills">
+              <label><input type="checkbox" name="brief-ch" value="Facebook" checked> Facebook</label>
+              <label><input type="checkbox" name="brief-ch" value="Telegram" checked> Telegram</label>
+              <label><input type="checkbox" name="brief-ch" value="Instagram"> Instagram</label>
+              <label><input type="checkbox" name="brief-ch" value="LinkedIn"> LinkedIn</label>
+              <label><input type="checkbox" name="brief-ch" value="TikTok"> TikTok</label>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal-create-brief">Cancel</button>
+          <button type="submit" class="btn btn-primary">Create & Assign Brief</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  
+  <!-- FULLSCREEN LIGHTBOX MEDIA VIEWER (ARTWORKS & VIDEOS) -->
+  <div class="lightbox-overlay" id="media-lightbox">
+    <div class="lightbox-container">
+      <div class="lightbox-top-bar">
+        <div class="lightbox-title-area">
+          <span class="lightbox-brand" id="lightbox-brand">Ethiopost</span>
+          <span class="lightbox-title" id="lightbox-title">Media Preview</span>
+        </div>
+
+        <div class="lightbox-actions">
+          <div class="lightbox-version-pills" id="lightbox-version-pills"></div>
+          <a id="lightbox-download-btn" class="lightbox-btn" download target="_blank">⬇ Download</a>
+          <button class="lightbox-close-btn" id="lightbox-close-btn">&times;</button>
+        </div>
+      </div>
+
+      <div class="lightbox-media-stage">
+        <img id="lightbox-image" class="lightbox-img" alt="Artwork Fullscreen" style="display: none;">
+        <video id="lightbox-video" controls playsinline class="lightbox-video" style="display: none;"></video>
+      </div>
+
+      <div class="lightbox-footer" id="lightbox-footer">
+        <span id="lightbox-uploader-note">Version Details</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST ALERTS -->
+  <div id="toast-shelf" class="toast-shelf"></div>
+
+  <!-- SCRIPTS -->
+  <script src="/js/api.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>
